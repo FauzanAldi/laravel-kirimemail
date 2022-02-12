@@ -1,16 +1,17 @@
 {
     "name": "aldif/laravel-kirimemail",
     "description": "Plugin untuk Integrasi aplikasi.kirim.email pada framework Laravel",
+    "type": "library",
+    "license": "MIT",
     "autoload": {
         "psr-4": {
             "Aldif\\LaravelKirimemail\\": "src/"
         }
     },
-    "authors": [
-        {
-            "name": "Fauzan Aldi",
-            "email": "aldifauzan085@gmail.com"
-        }
-    ],
+    "authors": [{
+        "name": "Fauzan Aldi",
+        "email": "aldifauzan085@gmail.com"
+    }],
+    "minimum-stability": "stable",
     "require": {}
 }
