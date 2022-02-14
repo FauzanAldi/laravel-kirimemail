@@ -5,13 +5,16 @@ namespace Aldif\LaravelKirimemail\Services;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
- 
+use Aldif\LaravelKirimemail\Services\ListModel;
+
+
 /**
  * Basic Calculator.
  * 
  */
 class AuthModule
-{
+{   
+
     /**
      * Menjumlahkan semua data dalam sebuah array.
      *
@@ -34,7 +37,7 @@ class AuthModule
     public function __construct()
     {
         $this->baseURLApi = Config::get('kirimemail.baseURLApi','https://api.kirim.email/');
-        $this->checkConnectionLink = Config::get('kirimemail.baseURLApi',$this->baseURLApi.'v3/list');
+        $this->checkConnectionLink = $this->baseURLApi.Config::get('kirimemail.CheckConnectionURL','v3/list');
         $this->username = Config::get('kirimemail.username','example');
         $this->apitoken = Config::get('kirimemail.apitoken','apitoken');
         $this->time = time();
@@ -65,7 +68,118 @@ class AuthModule
             return false;
         }
         
-    }  
+    }
+
+    public function getAll($category)
+    {   
+
+        $data=Config::get('kirimemail.category.'.$category.'.getall');
+ 
+        if(!$data){
+            return 'Link Api getAll tidak di temukan';
+        }
+
+        $response = Http::withHeaders([
+            'Auth-Id' => $this->username,
+            'Auth-Token' => $this->getGenerateToken(),
+            'Timestamp' => $this->time
+        ])->get($this->baseURLApi.$data);
+
+        return json_decode($response->body());
+        
+    }
+
+    public function getById($category, $id)
+    {   
+
+        $data=Config::get('kirimemail.category.'.$category.'.getbyid');
+        
+        if(!$data){
+            return 'Link Api get by id tidak di temukan';
+        }
+
+        $data=str_replace('{id}', $id, $data);
+
+        $response = Http::withHeaders([
+            'Auth-Id' => $this->username,
+            'Auth-Token' => $this->getGenerateToken(),
+            'Timestamp' => $this->time
+        ])->get($this->baseURLApi.$data);
+
+        return json_decode($response->body());
+        
+    }
+
+    public function delById($category, $id)
+    {   
+
+        $data=Config::get('kirimemail.category.'.$category.'.delete');
+        
+        if(!$data){
+            return 'Link Api get by id tidak di temukan';
+        }
+
+        $data=str_replace('{id}', $id, $data);
+        // dd($data);
+        
+        $response = Http::withHeaders([
+            'Auth-Id' => $this->username,
+            'Auth-Token' => $this->getGenerateToken(),
+            'Timestamp' => $this->time
+        ])->delete($this->baseURLApi.$data);
+
+        // dd($this->baseURLApi.$data);
+
+        return json_decode($response->body());
+        
+    }
+
+    public function create($category, $form)
+    {   
+
+        $data=Config::get('kirimemail.category.'.$category.'.create');
+        
+        if(!$data){
+            return 'Link Api create tidak di temukan';
+        }
+
+        
+        $response = Http::withHeaders([
+            'Auth-Id' => $this->username,
+            'Auth-Token' => $this->getGenerateToken(),
+            'Timestamp' => $this->time
+        ])->post($this->baseURLApi.$data, $form);
+
+        // dd($this->baseURLApi.$data);
+
+        return json_decode($response->body());
+        
+    }
+
+    public function update($category, $id, $form)
+    {   
+
+        $data=Config::get('kirimemail.category.'.$category.'.update');
+        
+        if(!$data){
+            return 'Link Api create tidak di temukan';
+        }
+
+        $data=str_replace('{id}', $id, $data);
+
+        $response = Http::withHeaders([
+            'Auth-Id' => $this->username,
+            'Auth-Token' => $this->getGenerateToken(),
+            'Timestamp' => $this->time
+        ])->put($this->baseURLApi.$data, $form);
+
+        // dd($this->baseURLApi.$data);
+
+        return json_decode($response->body());
+        
+    }
+
+
 
 
 
